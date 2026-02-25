@@ -155,94 +155,42 @@ public class SerieService {
 //        repository.save(serie);
 //    }
 
-//    public SerieDTO importarSerie(String titulo) {
-//
-//        // uso para buscar dados da série
-//        var json = consumo.obterDados(ENDERECO + titulo.replace(" ", "+") + API_KEY);
-//        DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
-//
-//        Serie serie = new Serie(dados);
-//
-//        // buscar temporadas e episódios
-//        List<Episodio> episodios = new ArrayList<>();
-//
-//        for (int i = 1; i <= serie.getTotalTemporadas(); i++) {
-//
-//            var jsonTemp = consumo.obterDados(
-//                    ENDERECO +
-//                            serie.getTitulo().replace(" ", "+") +
-//                            "&season=" + i +
-//                            API_KEY
-//            );
-//
-//            DadosTemporada dadosTemporada =
-//                    conversor.obterDados(jsonTemp, DadosTemporada.class);
-//
-//            episodios.addAll(
-//                    dadosTemporada.episodios().stream()
-//                            .map(e -> new Episodio(dadosTemporada.numero(), e))
-//                            .collect(Collectors.toList())
-//            );
-//        }
-//
-//        // Vincular episódios à série
-//        serie.setEpisodios(episodios);
-//
-//
-//        repository.save(serie);
-//
-//
-//        return new SerieDTO(
-//                serie.getId(),
-//                serie.getTitulo(),
-//                serie.getTotalTemporadas(),
-//                serie.getAvaliacao(),
-//                serie.getGenero(),
-//                serie.getAtores(),
-//                serie.getPoster(),
-//                serie.getSinopse()
-//        );
-//    }
-
     public SerieDTO importarSerie(String titulo) {
 
+        // uso para buscar dados da série
         var json = consumo.obterDados(ENDERECO + titulo.replace(" ", "+") + API_KEY);
         DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
 
         Serie serie = new Serie(dados);
 
+        // buscar temporadas e episódios
         List<Episodio> episodios = new ArrayList<>();
 
-        Integer totalTemporadas = serie.getTotalTemporadas();
+        for (int i = 1; i <= serie.getTotalTemporadas(); i++) {
 
-        // 🔒 PROTEÇÃO CONTRA NULL
-        if (totalTemporadas != null && totalTemporadas > 0) {
+            var jsonTemp = consumo.obterDados(
+                    ENDERECO +
+                            serie.getTitulo().replace(" ", "+") +
+                            "&season=" + i +
+                            API_KEY
+            );
 
-            for (int i = 1; i <= totalTemporadas; i++) {
+            DadosTemporada dadosTemporada =
+                    conversor.obterDados(jsonTemp, DadosTemporada.class);
 
-                var jsonTemp = consumo.obterDados(
-                        ENDERECO +
-                                serie.getTitulo().replace(" ", "+") +
-                                "&season=" + i +
-                                API_KEY
-                );
-
-                DadosTemporada dadosTemporada =
-                        conversor.obterDados(jsonTemp, DadosTemporada.class);
-
-                if (dadosTemporada.episodios() != null) {
-                    episodios.addAll(
-                            dadosTemporada.episodios().stream()
-                                    .map(e -> new Episodio(dadosTemporada.numero(), e))
-                                    .collect(Collectors.toList())
-                    );
-                }
-            }
+            episodios.addAll(
+                    dadosTemporada.episodios().stream()
+                            .map(e -> new Episodio(dadosTemporada.numero(), e))
+                            .collect(Collectors.toList())
+            );
         }
 
+        // Vincular episódios à série
         serie.setEpisodios(episodios);
 
+
         repository.save(serie);
+
 
         return new SerieDTO(
                 serie.getId(),
