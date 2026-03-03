@@ -17,6 +17,7 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
 
     List<Serie> findByTituloContainingIgnoreCase(String nomeSerie);
 
+    Optional<Serie> findByTitulo(String titulo);
 
     //List<Serie> findById(long idSerie);
     // usando a JPQL para puxar o id

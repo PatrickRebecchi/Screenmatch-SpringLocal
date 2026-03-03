@@ -2,12 +2,15 @@ package br.com.alura.screenmatchSpring.service;
 
 import br.com.alura.screenmatchSpring.dto.EpisodioDTO;
 import br.com.alura.screenmatchSpring.dto.SerieDTO;
+import br.com.alura.screenmatchSpring.exception.ResponseError;
+import br.com.alura.screenmatchSpring.exception.ScreenmatchException;
 import br.com.alura.screenmatchSpring.model.*;
 import br.com.alura.screenmatchSpring.repository.SerieRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
@@ -42,7 +45,7 @@ public class SerieService {
             Serie s = serie.get();
             return new SerieDTO(s.getId(), s.getTitulo(), s.getTotalTemporadas(), s.getAvaliacao(), s.getGenero(), s.getAtores(), s.getPoster(), s.getSinopse());
         }
-        return null;
+        throw new ScreenmatchException("Série não encontrada!");
     }
     private List<SerieDTO> converteDados(List<Serie> series){
         return series.stream()
@@ -161,7 +164,17 @@ public class SerieService {
         var json = consumo.obterDados(ENDERECO + titulo.replace(" ", "+") + API_KEY);
         DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
 
+        if (dados.titulo() == null || dados.titulo().isBlank()) {
+            throw new ScreenmatchException("Série não encontrada!");
+            }
+
         Serie serie = new Serie(dados);
+
+
+        if (repository.findByTitulo(serie.getTitulo()).isPresent()) {
+            throw new ScreenmatchException("Série já cadastrada!");
+        }
+
 
         // buscar temporadas e episódios
         List<Episodio> episodios = new ArrayList<>();
@@ -207,7 +220,8 @@ public class SerieService {
     public void deletarSerie(long id) {
 
         if (!repository.existsById(id)) {
-            throw new EntityNotFoundException("Série não encontrada");
+            //throw new EntityNotFoundException("Série não encontrada");
+            throw new ScreenmatchException("Série não encontrada");  // Criando a classe ScreenmatchException
         }
 
         repository.deleteById(id);
