@@ -63,3 +63,28 @@ select {
         display: block;
     }
 }
+.cabecalho-detalhe {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.logo {
+    text-decoration: none;
+    color: inherit;
+}
+
+.btn-voltar {
+    padding: 6px 14px;
+    background-color: #e50914;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-voltar:hover {
+    background-color: #b20710;
+}
