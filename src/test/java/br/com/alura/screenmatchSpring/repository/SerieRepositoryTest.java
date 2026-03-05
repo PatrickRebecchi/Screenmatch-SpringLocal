@@ -6,27 +6,29 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@ExtendWith(MockitoExtension.class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
 class SerieRepositoryTest {
 
-    @Mock
+    @Autowired
     private SerieRepository repository;
 
-    @InjectMocks
-    private SerieService service;
-
     @Test
-    void Top5Series() {
+    void deveBuscarSeriesPorGenero() {
+
     }
 
     @Test
-    void  findByGenero(){
+    void buscarPorId() {
+
 
     }
-
 }
