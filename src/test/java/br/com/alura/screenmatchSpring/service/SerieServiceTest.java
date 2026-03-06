@@ -53,18 +53,13 @@ class SerieServiceTest {
     }
 
     @Test
-    void deveLancarExcecaoQuandoSerieNaoExiste() {
+    void lancarExcecaoQuandoSerieNaoExiste() {
 
-        // Arrange
         when(repository.findById(1L)).thenReturn(Optional.empty());
-
-        // Act + Assert
         ScreenmatchException exception =
                 assertThrows(ScreenmatchException.class,
                         () -> service.obterPorId(1L));
-
         assertEquals("Série não encontrada!", exception.getMessage());
-
         verify(repository).findById(1L);
     }
 }
