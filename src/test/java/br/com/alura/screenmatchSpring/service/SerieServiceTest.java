@@ -29,8 +29,6 @@ class SerieServiceTest {
 
     @Test
     void deveRetornarSerieQuandoIdExiste() {
-
-        // Arrange
         Serie serie = new Serie();
         serie.setId(1L);
         serie.setTitulo("Breaking Bad");
@@ -41,12 +39,26 @@ class SerieServiceTest {
         serie.setPoster("poster.jpg");
         serie.setSinopse("Um professor vira produtor de metanfetamina.");
 
+        Serie serie1 = new Serie();
+        serie1.setId(2L);
+        serie1.setTitulo("The Office");
+        serie1.setTotalTemporadas(10);
+        serie1.setAvaliacao(8.9);
+        serie1.setGenero(Categoria.COMEDIA);
+        serie1.setAtores("Steve Carell");
+        serie1.setPoster("poster.jpg");
+        serie1.setSinopse("Um documentário simulado sobre um grupo de típicos funcionários de escritório.");
+
         when(repository.findById(1L)).thenReturn(Optional.of(serie));
+        when(repository.findById(2L)).thenReturn(Optional.of(serie1));
 
-        // Act
         SerieDTO resultado = service.obterPorId(1L);
+        SerieDTO resultado1 = service.obterPorId(2L);
 
-        // Assert
+        assertNotNull(resultado1);
+        assertEquals("The Office", resultado1.titulo());
+        verify(repository).findById(2L);
+
         assertNotNull(resultado);
         assertEquals("Breaking Bad", resultado.titulo());
         verify(repository).findById(1L);
@@ -60,6 +72,20 @@ class SerieServiceTest {
                 assertThrows(ScreenmatchException.class,
                         () -> service.obterPorId(1L));
         assertEquals("Série não encontrada!", exception.getMessage());
+        verify(repository).findById(1L);
+    }
+
+    @Test
+    void deveRetSerieQuandoIdExiste(){
+        Serie serie = new Serie();
+        serie.setId(1L);
+        serie.setTitulo("Teste");
+
+        when(repository.findById(1L)).thenReturn(Optional.of(serie));
+
+        SerieDTO resultado = service.obterPorId(1L);
+
+        assertEquals("Teste", resultado.titulo());
         verify(repository).findById(1L);
     }
 }
